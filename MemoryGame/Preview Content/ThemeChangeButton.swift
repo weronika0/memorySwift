@@ -7,20 +7,28 @@
 
 import SwiftUI
 
-struct ThemeChangeButton: View {
-    let tekst: String
-    let symbol: String
-    let dzialanie: () -> ()
+struct ThemeButtonView: View {
+    let themeName: String
+    let themeImage: String
+    @ObservedObject var viewModel: MemoGameViewModel
     var body: some View {
-        VStack{
-            Image(systemName: symbol).font(.largeTitle)
-            Text(tekst)
-        }.onTapGesture{
-            dzialanie()
-        }
+        Button(action: {
+            viewModel.selectedTheme = themeName
+            viewModel.changeTheme()
+            viewModel.shuffle()
+        }) {
+            VStack {
+                Image(systemName: themeImage)
+                    .font(.system(size: 24))
+                Text(themeName)
+                    .font(.caption)
+            }
+        }.foregroundColor(viewModel.themeColor)
     }
+    
 }
 
 #Preview {
-    ThemeChangeButton(tekst: "napis", symbol: "OK", dzialanie: {})
+    ThemeButtonView(themeName: "Emoji", themeImage: "face.smiling", viewModel: MemoGameViewModel())
 }
+

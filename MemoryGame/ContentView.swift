@@ -8,90 +8,55 @@
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject var viewModel: MemoGameViewModel
     
-    let symbolsEmoji: Array = ["😂", "😁", "🥺", "🤪", "🥺", "🤪", "😁", "😂"]
-    let symbolsAnimal: Array = ["🐹", "🐷", "🐰", "🦋", "🐞", "🐳", "🐥", "🦆", "🐹", "🐷", "🐰", "🦋", "🐞", "🐳", "🐥", "🦆"]
-    let symbolsSpooky: Array = ["👻", "💀", "🎃", "🧛🏻", "🧟‍♀️", "🧙🏻‍♂️", "🕷️", "👻", "💀", "🎃", "🧛🏻", "🧟‍♀️", "🧙🏻‍♂️", "🕷️"]
-    @State var symbols: Array = ["😁", "☺️", "😜", "🥺", "🐰", "🦋", "🐞", "🐳", "🟡"]
-    @State var cardsCounter: Int = 4
-    @State var selectedTheme: Color = .yellow
-    
-    func shuffleSymbols(symbolsArray: Array<String>){
-        symbols = symbolsArray.shuffled()
-    }
-    
-    var themeButtons: some View {
-        HStack{
-            ThemeChangeButton(tekst: "Emoji", symbol: "face.smiling", dzialanie: {
-                selectedTheme = .yellow
-                cardsCounter = 8
-                shuffleSymbols(symbolsArray: symbolsEmoji)}).foregroundColor(selectedTheme)
-            Spacer()
-            ThemeChangeButton(tekst: "Animals", symbol: "pawprint.circle", dzialanie: {
-                selectedTheme = .green
-                cardsCounter = 16
-                shuffleSymbols(symbolsArray: symbolsAnimal)}).foregroundColor(selectedTheme)
-            Spacer()
-            ThemeChangeButton(tekst: "Spooky", symbol: "moonphase.waxing.gibbous", dzialanie: {
-                selectedTheme = .purple
-                cardsCounter = 14
-                shuffleSymbols(symbolsArray: symbolsSpooky)}).foregroundColor(selectedTheme)
-        }
-    }
-    
-    var cardAdd: some View {
-            adjustCardNumber(by: 2, symbol: "+")
-        }
-
-        var cardRemove : some View {
-            adjustCardNumber(by: -2, symbol: "-")
-        }
-
-        func adjustCardNumber(by offset: Int, symbol: String) -> some View{
-            let newCounter = cardsCounter + offset
-            if(symbol == "+"){
-                return Button(action: {
-                    if newCounter >= 0 && newCounter <= symbols.count {
-                       cardsCounter = newCounter
-                    }
-                }){
-                    Image(systemName: "plus.app").font(.largeTitle)
-                }.disabled(cardsCounter >= symbols.count)
-            }
-                return Button(action: {
-                    if newCounter >= 0 && newCounter <= symbols.count {
-                       cardsCounter = newCounter
-                    }
-                }){
-                    Image(systemName: "minus.square").font(.largeTitle)
-                }.disabled(cardsCounter <= 0)
-            }
-    
-    var cardDisplay: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))]) {
-            ForEach (0..<cardsCounter, id: \.self) {index in
-                CardView(content: symbols[index]).aspectRatio(2/3, contentMode: .fit).foregroundColor(selectedTheme)
-            }
-        }
-    }
+    @State var selectedTheme = "Emoji"
     var body: some View {
         VStack {
-            Text("Memo").font(.largeTitle)
-            ScrollView {
-                cardDisplay
+            title
+            ScrollView{
+                cardDisplay.animation(.default, value: viewModel.cards)
             }
-            Spacer()
+            Button("Shuffle"){
+                viewModel.shuffle()
+            }.foregroundColor(viewModel.themeColor)
             themeButtons
         }
         .padding()
     }
+    
+    var themeButtons: some View {
+        HStack {
+            ThemeButtonView(themeName: "Emoji", themeImage: "face.smiling", viewModel: viewModel)
+            Spacer()
+            ThemeButtonView(themeName: "Motyw 2", themeImage: "arrow.2.circlepath.circle", viewModel: viewModel)
+            Spacer()
+            ThemeButtonView(themeName: "Motyw 3", themeImage: "pawprint.circle", viewModel: viewModel)
+        }
+    }
+    
+    var title: some View {
+        Text("Memo")
+            .font(.largeTitle)
+    }
+    
+    
+    var cardDisplay : some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 85), spacing: 0)], spacing: 0){
+            ForEach(viewModel.cards){ card in
+                CardView(card)
+                    .aspectRatio(2/3, contentMode: .fit)
+                    .padding(4)
+                    .onTapGesture {
+                        viewModel.choose(card)
+                    }
+            }
+        }.foregroundColor(viewModel.themeColor)
+    }
+    
 }
+
 
 #Preview {
-    ContentView()
+    ContentView( viewModel: MemoGameViewModel())
 }
-        
-    
-    
-
-    

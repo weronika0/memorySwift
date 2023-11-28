@@ -2,7 +2,18 @@
 //  MemoryGameApp.swift
 //  MemoryGame
 //
-//  Created by student on 28/11/2023.
+//  Created by student on 11/11/2023.
 //
 
-import Foundation
+import SwiftUI
+
+@main
+struct MemoryGameApp: App {
+    @StateObject var game = MemoGameViewModel()
+    var body: some Scene {
+        WindowGroup {
+            ContentView(viewModel: game)
+        }
+    }
+}
+
