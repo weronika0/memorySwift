@@ -29,9 +29,9 @@ struct ContentView: View {
         HStack {
             ThemeButtonView(themeName: "Emoji", themeImage: "face.smiling", viewModel: viewModel)
             Spacer()
-            ThemeButtonView(themeName: "Motyw 2", themeImage: "arrow.2.circlepath.circle", viewModel: viewModel)
+            ThemeButtonView(themeName: "Animals", themeImage: "arrow.2.circlepath.circle", viewModel: viewModel)
             Spacer()
-            ThemeButtonView(themeName: "Motyw 3", themeImage: "pawprint.circle", viewModel: viewModel)
+            ThemeButtonView(themeName: "Spooky", themeImage: "pawprint.circle", viewModel: viewModel)
         }
     }
     
